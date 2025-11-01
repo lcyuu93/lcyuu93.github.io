@@ -2,10 +2,12 @@ name: Update Activity Log
 
 on:
   schedule:
-    - cron: '0 0 * * *'   # O：每天 00:00 UTC 跑一次（避免過度頻繁）
-  workflow_dispatch:        # E：可手動觸發，方便助教驗證
+    - cron: '0 0 * * *'   # 每天 00:00 UTC
+  workflow_dispatch:
 
-# 避免同時有多次執行（例如手動連點）造成互相覆蓋
+permissions:
+  contents: write
+
 concurrency:
   group: activity-log
   cancel-in-progress: true
@@ -17,9 +19,11 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Update recent activity into README
-        uses: TheDanniCraft/activity-log@main
+        uses: TheDanniCraft/activity-log@v1
         with:
+          GITHUB_USERNAME: "lcyuu93"
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
-
-      - name: Done
-        run: echo "✅ Activity log updated."
+          # 可選參數：
+          # EVENT_LIMIT: 10
+          # OUTPUT_STYLE: MARKDOWN
+          # README_PATH: README.md
