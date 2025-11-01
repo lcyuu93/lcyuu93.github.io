@@ -1,0 +1,25 @@
+name: Update Activity Log
+
+on:
+  schedule:
+    - cron: '0 0 * * *'   # O：每天 00:00 UTC 跑一次（避免過度頻繁）
+  workflow_dispatch:        # E：可手動觸發，方便助教驗證
+
+# 避免同時有多次執行（例如手動連點）造成互相覆蓋
+concurrency:
+  group: activity-log
+  cancel-in-progress: true
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update recent activity into README
+        uses: TheDanniCraft/activity-log@v2
+        with:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+
+      - name: Done
+        run: echo "✅ Activity log updated."
